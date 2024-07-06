@@ -1,21 +1,33 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg text-center">
-      <h1 class="text-3xl font-bold mb-4 text-gray-800">Inversity Team 13</h1>
-      <p class="text-gray-600 mb-6">
-        Crown Estate Hackathon
-      </p>
-      <div class="mb-4">
-        <input v-model="message" type="text" class="w-full p-2 border rounded mb-2" placeholder="Write a message">
-        <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Send
-        </button>
+  <div>
+    <nav class="bg-gray-800 p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="text-white text-lg font-bold">Inversity Team 13</div>
+        <ul class="flex space-x-4">
+          <li><a href="#" class="text-gray-300 hover:text-white text-3xl">Home</a></li>
+          <li><a href="#" class="text-gray-300 hover:text-white">About</a></li>
+          <li><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+        </ul>
       </div>
-      <div>
-      {{ this.domain_origin }}
-      </div>
-      <div v-if="responseMessage" class="mt-4 p-4 bg-gray-200 rounded">
-        <p class="text-gray-800">{{ responseMessage }}</p>
+    </nav>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+      <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg text-center">
+        <h1 class="text-3xl font-bold mb-4 text-gray-800">Inversity Team 13</h1>
+        <p class="text-gray-600 mb-6">
+          Crown Estate Hackathon
+        </p>
+        <div class="mb-4">
+          <input v-model="message" type="text" class="w-full p-2 border rounded mb-2" placeholder="Write a message">
+          <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Send
+          </button>
+        </div>
+        <div>
+          {{ this.domain_origin }}
+        </div>
+        <div v-if="responseMessage" class="mt-4 p-4 bg-gray-200 rounded">
+          <p class="text-gray-800">{{ responseMessage }}</p>
+        </div>
       </div>
     </div>
   </div>
