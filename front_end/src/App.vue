@@ -58,18 +58,18 @@
               <span class="ms-3">Analytics</span>
             </a>
             <ul class="ml-6 mt-1 space-y-1">
-              <li>
+              <li @click="$router.push('dashboard')">
                 <a
                   href="#"
                   class="block p-2 text-gray-700 rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
-                  >- Dashboard 1</a
+                  >- Global Wind Energy Dashboard</a
                 >
               </li>
               <li>
                 <a
                   href="#"
                   class="block p-2 text-gray-700 rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
-                  >- Dashboard 2</a
+                  >- Biodiversity Dashboard</a
                 >
               </li>
             </ul>

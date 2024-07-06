@@ -33,8 +33,6 @@ def send_message():
     global df_chunks
     data = request.json
     conversation_history = data.get('conversation_history', [])
-    question = data.get('question')
-    conversation_history.append({"role": "user", "content": question})
     truncated_history = truncate_conversation_history(conversation_history)
     response = ask(truncated_history, df_chunks)
     conversation_history.append({"role": "assistant", "content": response})
