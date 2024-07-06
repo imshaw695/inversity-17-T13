@@ -111,6 +111,7 @@ export default {
         { title: "Shell Exits US Offshore Wind Project, Sells Stake to Ocean Winds", link: "https://www.offshorewind.biz/2024/03/21/shell-exits-us-offshore-wind-project-sells-stake-to-ocean-winds/" },
         { title: "Plymouth Marine Laboratory: Offshore wind farms: new paper reveals global impacts on biodiversity and ecosystem services", link: "https://www.pml.ac.uk/news/Offshore-wind-farms-new-paper-reveals-global-impac" },
       ],
+      waiting: true,
     };
   },
   components: {
@@ -126,7 +127,7 @@ export default {
   methods: {
     async sendMessage() {
       if (this.newMessage.trim() === "") return;
-
+      this.waiting = true;
       // Append user message to chat history
       const conversationHistory = this.messages.map(msg => ({
         role: msg.isSent ? 'user' : 'assistant',
@@ -134,7 +135,7 @@ export default {
       }));
 
       conversationHistory.push({ role: 'user', content: this.newMessage });
-
+      this.newMessage = "";
       // Send the message to the server
       try {
         const response = await fetch(`${this.domain_origin}/send_message`, {
@@ -153,11 +154,13 @@ export default {
             text: msg.content,
             isSent: msg.role === 'user'
           }));
+          this.waiting = false;
         } else {
           this.messages.push({
             text: "Error: Failed to send message.",
             isSent: false,
           });
+          this.waiting = false;
         }
       } catch (error) {
         console.error("Error sending message:", error);
@@ -165,6 +168,7 @@ export default {
           text: "Error: An error occurred while sending the message.",
           isSent: false,
         });
+        this.waiting = false;
       }
 
       // Clear the input field
