@@ -2,7 +2,7 @@ import os
 import platform
 import socket
 from flask import Flask
-from flask_talisman import Talisman
+from flask_cors import CORS
 
 site_config = {}
 site_config["platform"] = platform.system()
@@ -32,20 +32,14 @@ def create_app():
         print(f'On line 54 the error is {err}')
 
     with app.app_context():
-        SELF = "'self'"
-        csp = {
-            "default-src": "'self'",
-            "img-src": "*",
-            'connect-src': [
-                SELF,
-            ],
-            'style-src' : [
-            SELF,
-            '\'unsafe-inline\''
-            ]
-        }
-        talisman = Talisman(app, content_security_policy=csp)
-
         from website import routes
+        allowed_origins = [
+            "http://localhost:5000",
+            "http://localhost:5001",
+            "http://localhost:5173",
+        ]
 
+        # enable CORS in development
+        if os.environ.get("INSTANCE_TYPE") == "development":
+            CORS(app, resources={r"/*": {"origins": allowed_origins}})
         return app

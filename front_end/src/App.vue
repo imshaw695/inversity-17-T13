@@ -11,6 +11,12 @@
           Send
         </button>
       </div>
+      <div>
+      {{ this.domain_origin }}
+      </div>
+      <div v-if="responseMessage" class="mt-4 p-4 bg-gray-200 rounded">
+        <p class="text-gray-800">{{ responseMessage }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +26,7 @@ export default {
   data() {
     return {
       message: '',
+      responseMessage: '',
       domain_origin: ''
     };
   },
@@ -39,14 +46,15 @@ export default {
           },
           body: JSON.stringify({ message: this.message })
         });
+        const result = await response.json();
         if (response.ok) {
-          alert('Message sent successfully!');
+          this.responseMessage = result.message;
         } else {
-          alert('Failed to send message.');
+          this.responseMessage = 'Failed to send message.';
         }
       } catch (error) {
         console.error('Error sending message:', error);
-        alert('An error occurred while sending the message.');
+        this.responseMessage = 'An error occurred while sending the message.';
       }
     }
   }
