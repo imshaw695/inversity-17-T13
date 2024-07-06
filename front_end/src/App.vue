@@ -146,7 +146,7 @@
                 >Data Integration</span
               >
             </a>
-            <ul class="ml-6 mt-1 space-y-1">
+            <!-- <ul class="ml-6 mt-1 space-y-1">
               <li>
                 <a
                   href="#"
@@ -168,7 +168,7 @@
                   >- Sub Link 3.3</a
                 >
               </li>
-            </ul>
+            </ul> -->
           </li>
           <li>
             <a

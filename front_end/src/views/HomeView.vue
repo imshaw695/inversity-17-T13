@@ -21,17 +21,22 @@
     <div class="h-2/3 flex">
       <!-- Left Column -->
       <div class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2">
-        <!-- Content for the left column goes here -->
+        <canvas id="leftPieChart"></canvas>
       </div>
       <!-- Right Column -->
       <div class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2">
-        <!-- Content for the right column goes here -->
+        <canvas id="rightPieChart"></canvas>
       </div>
     </div>
   </main>
 </template>
 
 <script>
+import { Pie } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement)
+
 export default {
   data() {
     return {
@@ -40,11 +45,12 @@ export default {
       domain_origin: ''
     };
   },
-  created() {
-    this.domain_origin = window.location.origin;
-    if (this.domain_origin.slice(-5) == ":5173") {
-      this.domain_origin = this.domain_origin.replace(":5173", ":5000");
-    }
+  components: {
+    PieChart: Pie
+  },
+  mounted() {
+    this.createPieChart('leftPieChart', ['Solar', 'Wind', 'Hydro', 'Geothermal'], [30, 40, 20, 10]);
+    this.createPieChart('rightPieChart', ['Solar', 'Wind', 'Hydro', 'Geothermal'], [25, 35, 25, 15]);
   },
   methods: {
     async sendMessage() {
@@ -84,6 +90,36 @@ export default {
         const chatContainer = this.$refs.chatContainer;
         chatContainer.scrollTop = chatContainer.scrollHeight;
       });
+    },
+    createPieChart(chartId, labels, data) {
+      new ChartJS(document.getElementById(chartId).getContext('2d'), {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Clean Energy Sources'
+            }
+          }
+        }
+      });
+    }
+  },
+  created() {
+    this.domain_origin = window.location.origin;
+    if (this.domain_origin.slice(-5) == ":5173") {
+      this.domain_origin = this.domain_origin.replace(":5173", ":5000");
     }
   }
 };
