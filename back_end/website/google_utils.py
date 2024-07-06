@@ -8,7 +8,7 @@ from google.oauth2 import service_account
 def get_secret(secret_id):
     try:
         client = secretmanager.SecretManagerServiceClient()
-        project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
+        project_id = os.getenv('gcp_project_id')
         secret_name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
         response = client.access_secret_version(name=secret_name)
         return response.payload.data.decode('UTF-8')
@@ -18,7 +18,7 @@ def get_secret(secret_id):
 
 def get_bigquery_client():
     project_id = os.getenv('gcp_project_id')
-    service_account_file_path = os.getenv('gcp_credentials_path')
+    service_account_file_path = "back_end\secrets_no_git\gcp_creds.json"
      # Create credentials using the service account key
     credentials = service_account.Credentials.from_service_account_file(service_account_file_path)
     

@@ -33,14 +33,14 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = (
         "postgresql://"
-        + DB_USERNAME
+        # + DB_USERNAME
         + ":"
-        + database_password
+        # + database_password
         + "@"
-        + database_url
-        + ":" + database_port
+        # + database_url
+        # + ":" + database_port
         + "/"
-        + database
+        # + database
     )
     # This option is specifically for PythonAnyWhere as the mysql db drops connections that are 300 seconds old
     # Inspired from here: https://stackoverflow.com/questions/56271116/flask-sqlalchemy-sqlalchemy-engine-options-not-set-up-correctly

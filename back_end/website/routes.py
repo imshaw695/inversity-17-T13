@@ -30,6 +30,7 @@ def index():
 
 @app.route("/send_message", methods=["POST"])
 def send_message():
+    global df_chunks
     data = request.json
     conversation_history = data.get('conversation_history', [])
     question = data.get('question')

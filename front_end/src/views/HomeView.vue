@@ -2,14 +2,14 @@
   <main class="h-screen flex flex-col">
     <!-- Top Row: Chat Window -->
     <div
-      class="h-2/3 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 flex flex-col"
+      class="h-1/3 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 flex flex-col"
     >
       <div class="flex-1 overflow-y-auto mb-4" ref="chatContainer">
         <div v-for="(msg, index) in messages" :key="index" class="mb-2">
           <div :class="msg.isSent ? 'text-right' : 'text-left'">
             <span
               :class="
-                msg.isSent ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                msg.isSent ? 'bg-blue-500 text-white' : 'bg-green-400 text-black'
               "
               class="inline-block px-4 py-2 rounded-lg"
             >
@@ -22,7 +22,7 @@
         <input
           v-model="newMessage"
           type="text"
-          class="flex-1 p-2 border rounded-lg"
+          class="flex-1 p-2 border rounded-lg bg-gray-200"
           placeholder="Type your message"
           @keyup.enter="sendMessage"
         />
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Bottom Row -->
-    <div class="h-1/3 flex">
+    <div class="h-2/3 flex">
       <!-- Left Column: Articles -->
       <div
         class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2"
@@ -47,7 +47,7 @@
         </div>
         <ul>
           <li v-for="(article, index) in articles" :key="index" class="mb-2">
-            <a href="#" class="text-blue-500">{{ article.title }}</a>
+            <a :href="article.link" class="text-blue-500">{{ article.title }}</a>
           </li>
         </ul>
       </div>
@@ -55,7 +55,7 @@
       <div
         class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
       >
-        <canvas id="rightPieChart"></canvas>
+      <iframe src="https://ourworldindata.org/grapher/cumulative-installed-wind-energy-capacity-gigawatts?tab=chart" loading="lazy" style="width: 100%; height: 600px; border: 0px none;" allow="web-share; clipboard-write"></iframe>
       </div>
     </div>
     <footer
@@ -106,10 +106,10 @@ export default {
       messages: [],
       domain_origin: "",
       articles: [
-        { title: "Article 1: The Future of Wind Energy" },
-        { title: "Article 2: Benefits of Offshore Wind Farms" },
-        { title: "Article 3: Innovations in Clean Energy" },
-        { title: "Article 4: How Wind Energy Works" },
+        { title: "Marine Data Exchange Announced New Partnership with Crown Estate Scotland", link: "https://www.marinedataexchange.co.uk/content/stories/crown-estate-scotland-partnership-what-it-all-means" },
+        { title: "Baltic Sea countries pledge closer collaboration", link: "https://windeurope.org/newsroom/press-releases/baltic-sea-countries-pledge-closer-collaboration-to-secure-critical-offshore-energy-infrastructure/" },
+        { title: "Shell Exits US Offshore Wind Project, Sells Stake to Ocean Winds", link: "https://www.offshorewind.biz/2024/03/21/shell-exits-us-offshore-wind-project-sells-stake-to-ocean-winds/" },
+        { title: "Plymouth Marine Laboratory: Offshore wind farms: new paper reveals global impacts on biodiversity and ecosystem services", link: "https://www.pml.ac.uk/news/Offshore-wind-farms-new-paper-reveals-global-impac" },
       ],
     };
   },
@@ -117,18 +117,23 @@ export default {
     PieChart: Pie,
   },
   mounted() {
-    this.createPieChart(
-      "rightPieChart",
-      ["Solar", "Wind", "Hydro", "Geothermal"],
-      [25, 35, 25, 15]
-    );
+    // this.createPieChart(
+    //   "rightPieChart",
+    //   ["Solar", "Wind", "Hydro", "Geothermal"],
+    //   [25, 35, 25, 15]
+    // );
   },
   methods: {
     async sendMessage() {
       if (this.newMessage.trim() === "") return;
 
-      // Add the new message to the chat window
-      this.messages.push({ text: this.newMessage, isSent: true });
+      // Append user message to chat history
+      const conversationHistory = this.messages.map(msg => ({
+        role: msg.isSent ? 'user' : 'assistant',
+        content: msg.text
+      }));
+
+      conversationHistory.push({ role: 'user', content: this.newMessage });
 
       // Send the message to the server
       try {
@@ -137,14 +142,17 @@ export default {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ message: this.newMessage }),
+          body: JSON.stringify({ conversation_history: conversationHistory }),
         });
 
         const result = await response.json();
 
-        // Display the response message from the server
+        // Display the complete chat history from the server
         if (response.ok) {
-          this.messages.push({ text: result.message, isSent: false });
+          this.messages = result.conversation_history.map(msg => ({
+            text: msg.content,
+            isSent: msg.role === 'user'
+          }));
         } else {
           this.messages.push({
             text: "Error: Failed to send message.",
