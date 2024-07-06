@@ -18,7 +18,14 @@ def create_app():
     print("now running create_app")
     # Create Flask application.
     # this_directory = os.path.abspath(os.path.dirname(__file__))
-    app = Flask(__name__)
+    this_directory = os.path.abspath(os.path.dirname(__file__))
+    static_folder = os.path.join(this_directory, "templates", "static")
+    app = Flask(
+        __name__,
+        instance_relative_config=False,
+        static_folder=static_folder,
+        static_url_path="/static",
+    )
     try:
         app.config.from_object("config.Config")
     except Exception as err:

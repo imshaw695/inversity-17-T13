@@ -1,18 +1,57 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg text-center">
+      <h1 class="text-3xl font-bold mb-4 text-gray-800">Inversity Team 13</h1>
+      <p class="text-gray-600 mb-6">
+        Crown Estate Hackathon
+      </p>
+      <div class="mb-4">
+        <input v-model="message" type="text" class="w-full p-2 border rounded mb-2" placeholder="Write a message">
+        <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Send
+        </button>
+      </div>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      message: '',
+      domain_origin: ''
+    };
+  },
+  created() {
+    this.domain_origin = window.location.origin;
+    if (this.domain_origin.slice(-5) == ":5173") {
+      this.domain_origin = this.domain_origin.replace(":5173", ":5000");
+    }
+  },
+  methods: {
+    async sendMessage() {
+      try {
+        const response = await fetch(`${this.domain_origin}/test`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: this.message })
+        });
+        if (response.ok) {
+          alert('Message sent successfully!');
+        } else {
+          alert('Failed to send message.');
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        alert('An error occurred while sending the message.');
+      }
+    }
+  }
+};
+</script>
 
 <style scoped>
 .logo {
