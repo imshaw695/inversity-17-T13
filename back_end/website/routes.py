@@ -11,8 +11,8 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/test", methods=["POST"])
-def test():
+@app.route("/send_message", methods=["POST"])
+def send_message():
     return dict(rc=0, message="Response from flask.")
 
 
