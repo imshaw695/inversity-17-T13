@@ -34,3 +34,152 @@
   --surface-900: 177 155 205 1;
   --surface-950: 169 145 200 1; /* Darkest Shade */
 }
+/* Card */
+.card {
+  @apply flex flex-col items-center bg-white rounded-lg shadow-md overflow-hidden;
+}
+
+/* Headings */
+.display-4 {
+  @apply text-4xl font-bold mb-4;
+}
+
+/* Form Width */
+.w-50 {
+  @apply w-1/2;
+}
+
+/* Form Fields */
+.form-floating {
+  @apply relative mb-4;
+}
+
+.form-control {
+  @apply block w-full ;
+}
+
+.form-select {
+  @apply block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none;
+}
+
+/* Form Labels positioned like Bootstrap's floating labels */
+.form-label {
+  @apply absolute top-3 left-3 -mt-px inline-block px-1 bg-white text-gray-700 transition-all;
+}
+
+/* Buttons */
+.btn {
+  @apply inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out;
+}
+
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-700;
+}
+
+.btn-success {
+  @apply bg-green-500 hover:bg-green-700;
+}
+
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-700;
+}
+
+.btn-warning {
+  @apply bg-yellow-500 hover:bg-yellow-600;
+}
+
+.btn-block {
+  @apply w-full;
+}
+
+/* Table */
+.table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.table-bordered {
+  @apply border border-gray-200;
+}
+
+.table-hover tbody tr:hover {
+  @apply bg-gray-100;
+}
+
+.thead-dark th {
+  @apply bg-gray-800 text-white;
+}
+
+.min-vh-100 {
+  @apply min-h-screen;
+}
+
+.d-flex {
+  @apply flex;
+}
+
+.align-items-center {
+  @apply items-center;
+}
+
+.align-center {
+  @apply justify-center items-center;
+}
+
+/* Border styles */
+.border-1 {
+  @apply border border-solid border-gray-300;
+}
+
+.rounded {
+  @apply rounded-md;
+}
+
+/* Grid */
+.d-grid {
+  @apply grid;
+}
+
+/* Image styles */
+.card-img-top {
+  @apply inline-block max-w-full h-auto align-middle;
+}
+
+/* Form Check */
+.form-check-input {
+  @apply appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer;
+}
+
+.form-check {
+  @apply relative block pl-6 mt-2;
+}
+
+.form-check-label {
+  @apply text-gray-700;
+}
+
+/* Input group */
+.input-group-text {
+  @apply bg-gray-100 text-gray-600 text-sm font-medium px-3 py-2 border border-r-0 border-gray-300;
+}
+
+.input-group {
+  @apply flex items-stretch w-full;
+}
+
+/* Additional Button Sizes */
+.btn-lg {
+  @apply text-lg py-2 px-4;
+}
+
+.btn-sm {
+  @apply text-sm py-1.5 px-3;
+}
+
+/* Custom sizes for specific use cases */
+.w-100 {
+  @apply w-full;
+}
+
+.col-md-8, .col-lg-6, .col-xl-4 {
+  @apply w-full max-w-md mx-auto; /* Adjust based on your layout responsiveness */
+}

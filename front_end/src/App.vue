@@ -1,89 +1,114 @@
+<script setup>
+</script>
+
 <template>
-  <div>
-    <nav class="bg-gray-800 p-4">
-      <div class="container mx-auto flex justify-between items-center">
-        <div class="text-white text-lg font-bold">Inversity Team 13</div>
-        <ul class="flex space-x-4">
-          <li><a href="#" class="text-gray-300 hover:text-white text-3xl">Home</a></li>
-          <li><a href="#" class="text-gray-300 hover:text-white">About</a></li>
-          <li><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
-        </ul>
+  <div class="min-w-full min-h-full flex flex-col justify-between">
+    <Navbar :user="user" :messages="messages" :roles="roles" v-if="(this.user.logged_in)" />
+    <RouterView
+    :users="users"
+    :user="user"
+    :roles="roles"
+    :messages="messages"
+    />
+    <!-- These breaks stop the bottom of the page content from disapearing behind the fixed footer -->
+    <div><br> <br> <br> </div>
+    <footer class="fixed bottom-0 w-full bg-gray-900 text-white py-1" style="z-index: 9999;">
+      <MessageDisplay v-bind:messages="messages"/>
+      <hr class="mx-4 my-1">
+      <div class="flex justify-between">
+        <p class="mx-3 my-1">
+            For support, please email us at: support@thebigteam.co.uk
+            <!-- IP Address: {{ this.user.ip_address }} -->
+          </p>
+          <p class="mx-3 my-1">
+            <i className="icon bi-c-circle ms-0 ps-0" style="font-size: 1.0rem;"></i> 2023 - dt-squad Ltd&nbsp
+          </p>
       </div>
-    </nav>
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
-      <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg text-center">
-        <h1 class="text-3xl font-bold mb-4 text-gray-800">Inversity Team 13</h1>
-        <p class="text-gray-600 mb-6">
-          Crown Estate Hackathon
-        </p>
-        <div class="mb-4">
-          <input v-model="message" type="text" class="w-full p-2 border rounded mb-2" placeholder="Write a message">
-          <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Send
-          </button>
-        </div>
-        <div>
-          {{ this.domain_origin }}
-        </div>
-        <div v-if="responseMessage" class="mt-4 p-4 bg-gray-200 rounded">
-          <p class="text-gray-800">{{ responseMessage }}</p>
-        </div>
-      </div>
-    </div>
+      <hr class="mx-4 my-1">
+    </footer>
   </div>
 </template>
 
 <script>
+import { reactive } from "vue";
+import { User } from "./js/User";
+import { Users } from "./js/Users";
+import { Messages } from "./js/Messages";
+import MessageDisplay from "./components/MessageDisplay.vue";
+import Navbar from "./components/Navbar.vue"
+import Roles from "./js/Roles";
+// import { useRoute } from 'vue-router';
 export default {
   data() {
     return {
-      message: '',
-      responseMessage: '',
-      domain_origin: ''
-    };
+      users: {},
+      user: {},
+      messages: {},
+      roles: {},
+      // needsVueRefresh: { "data": false, "keepLooping": false },
+    }
   },
   created() {
-    this.domain_origin = window.location.origin;
-    if (this.domain_origin.slice(-5) == ":5173") {
-      this.domain_origin = this.domain_origin.replace(":5173", ":5000");
+    let domain_origin = window.location.origin
+    if (domain_origin.slice(-5) == ":5173") {
+      domain_origin = domain_origin.replace(":5173", ":5000")
     }
+    const messages = reactive(new Messages());
+    const user = reactive(new User(messages, domain_origin));
+    const roles = reactive(new Roles(domain_origin, user));
+    const users = reactive(new Users(user, messages, domain_origin, roles));
+    this.user = user;
+    this.roles = roles;
+    this.users = users;
+    this.messages = messages;
+    this.check_invalid_token();
+    this.check_token_validity();
+    // this.needsVueRefresh.keepLooping = true;
+    // this.check_logged_in();
+    // this.vueRefresh()
+  },
+  components: {
+    MessageDisplay,
+    Navbar
   },
   methods: {
-    async sendMessage() {
-      try {
-        const response = await fetch(`${this.domain_origin}/test`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message: this.message })
-        });
-        const result = await response.json();
-        if (response.ok) {
-          this.responseMessage = result.message;
-        } else {
-          this.responseMessage = 'Failed to send message.';
+    check_invalid_token() {
+        if (this.user.invalid_token == true) {
+                this.user.logout()
+                this.messages.add_message("Session expired, please login.", "text-danger h6");
+                this.$router.push({ name: "login" });
+                this.user.logged_in = true;
+                this.user.invalid_token = false;
         }
-      } catch (error) {
-        console.error('Error sending message:', error);
-        this.responseMessage = 'An error occurred while sending the message.';
+        setTimeout(this.check_invalid_token, 2000)
+      },
+    check_token_validity() {
+      if (this.user.logged_in == true) {
+        this.user.check_token_validity();
       }
-    }
+      setTimeout(this.check_token_validity, 30000)
+    },
+    vue_refresh() {
+            try {
+                this.needs_vue_refresh.data = this.user.ip_address
+            } catch (error) {
+
+            }
+
+            if (this.needs_vue_refresh.keep_looping) {
+                const my_timeout = setTimeout(this.vue_refresh, 500);
+            }
+        },    
+    check_logged_in() {
+      // this.users.current_user = this.user.check_logged_in();
+      if (!(this.user.logged_in) && !(this.$router.name=="passwordreset") ) {
+        this.$router.push("login")
+      }
+      setTimeout(this.check_logged_in, 5000);
+    },
   }
-};
+}
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>
