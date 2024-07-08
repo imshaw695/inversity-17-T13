@@ -35,7 +35,7 @@ def execute_sql(sql, commit=False, records=False, records_package=False):
             with connection.cursor() as cursor:
                 table = "documents"
                 query = f"""
-                        INSERT INTO {table} (url, slice_index, token_count, content_plain_text, embedding) 
+                        INSERT INTO {table} (url, slice_index, token_count, content_plain_text, embedding)
                         VALUES (%s, %s, 100, %s, %s)
                     """
                 result = cursor.execute(query, (records_package["metadata"]["url"], records_package["metadata"]["slice_index"], records_package["content"], records_package["embeddings"]))

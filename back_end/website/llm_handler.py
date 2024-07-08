@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Fetch the API key from Secret Manager
 try:
-    openai_api_key = os.getenv('OPEN_API_KEY') # Ensure this matches your secret name
+    openai_api_key = os.getenv('OPEN_API_KEY')  # Ensure this matches your secret name
     client_openai = openai.OpenAI(api_key=openai_api_key)
     logging.info("Successfully fetched OpenAI API key.")
 except Exception as e:
@@ -38,7 +38,7 @@ def strings_ranked_by_relatedness(
     query_embedding_response = client_openai.embeddings.create(
         model=EMBEDDING_MODEL,
         input=query,
-    )    
+    )
     query_embedding = query_embedding_response.data[0].embedding
     strings_and_relatednesses = [
         (row[text_col_name], relatedness_fn(query_embedding, row[embedding_col_name]))
@@ -74,7 +74,8 @@ def query_message(
     query = conversation_history[-1]['content']
     full_message = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history])
     strings, relatednesses = strings_ranked_by_relatedness(full_message, df)
-    introduction = """Use the below texts on The Crown Estate's FY23 (2022/23) annual reports and accounts to answer the subsequent question. If the answer cannot be found in the texts, write "I could not find an answer." """
+    introduction = """Use the below texts on The Crown Estate's FY23 (2022/23) annual reports and accounts to answer the subsequent question. If the answer cannot be found in the
+    texts, write "I could not find an answer." """
     question = f"\n\nQuestion: {query}"
     message = introduction
     for string in strings:

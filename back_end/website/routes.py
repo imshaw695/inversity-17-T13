@@ -2,7 +2,6 @@ import os
 from flask import jsonify, send_from_directory, render_template, request
 from website.utilities import execute_sql, get_embedding, get_response
 from flask import current_app as app
-import time
 # from website.llm_handler import ask, truncate_conversation_history
 # from website.google_utils import get_bigquery_client, fetch_embeddings_from_bigquery
 # import logging
