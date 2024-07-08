@@ -21,37 +21,71 @@ BQ_TABLE = os.getenv('BQ_TABLE')
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
-# Now comes the actual function definition for processing this page
 def index():
-    # This is a vue project that serves the static index file only
-    return render_template("index.html")
+    """
+    Serve the static index file for the Vue project.
+
+    Returns:
+        str: The rendered HTML for the index page.
+    """
+    try:
+        return render_template("index.html")
+    except Exception as e:
+        app.logger.error(f"Error rendering index page: {e}")
+        return "Error rendering index page", 500
 
 
 @app.route("/send_message", methods=["POST"])
 def send_message():
-    # global df_chunks
-    data = request.json
-    conversation_history = data.get('conversation_history', [])
-    # truncated_history = truncate_conversation_history(conversation_history)
-    # response = ask(truncated_history, df_chunks)
-    response = "This is a response from the flask server."
-    conversation_history.append({"role": "assistant", "content": response})
-    return jsonify({'response': response, 'conversation_history': conversation_history})
-    # return dict(rc=0, message="Response from flask.")
+    """
+    Handle sending a message to the server and getting a response.
+
+    Returns:
+        json: A JSON response containing the assistant's reply and the updated conversation history.
+    """
+    try:
+        # global df_chunks
+        data = request.json
+        conversation_history = data.get('conversation_history', [])
+        # truncated_history = truncate_conversation_history(conversation_history)
+        # response = ask(truncated_history, df_chunks)
+        response = "This is a response from the flask server."
+        conversation_history.append({"role": "assistant", "content": response})
+        return jsonify({'response': response, 'conversation_history': conversation_history})
+    except Exception as e:
+        app.logger.error(f"Error in /send_message: {e}")
+        return jsonify({'error': 'An error occurred while processing the request'}), 500   
 
 
 @app.errorhandler(404)
-# inbuilt function which takes error as parameter
 def not_found(e):
-    # defining function
+    """
+    Handle 404 errors by rendering the index page.
+
+    Args:
+        e (Exception): The exception that was raised.
+
+    Returns:
+        tuple: The rendered HTML for the index page and the 404 status code.
+    """
+    app.logger.warning(f"404 error: {e}")
     return render_template("index.html"), 404
 
 
 @app.route("/favicon.png")
 @app.route("/favicon.ico")
 def show_favicon():
-    path_for_favicon = os.path.join(app.root_path, "templates")
-    return_package = send_from_directory(
-        path_for_favicon, "favicon.ico", mimetype="image/vnd.microsoft.icon"
-    )
-    return return_package
+    """
+    Serve the favicon for the website.
+
+    Returns:
+        Response: The response object containing the favicon.
+    """
+    try:
+        path_for_favicon = os.path.join(app.root_path, "templates")
+        return send_from_directory(
+            path_for_favicon, "favicon.ico", mimetype="image/vnd.microsoft.icon"
+        )
+    except Exception as e:
+        app.logger.error(f"Error serving favicon: {e}")
+        return "Error serving favicon", 500
