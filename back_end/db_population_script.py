@@ -1,8 +1,12 @@
 import os
 import fitz  # PyMuPDF
-from openai import OpenAI
 import psycopg2
+from dotenv import load_dotenv
+from openai import OpenAI
 from psycopg2 import sql
+
+this_directory = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(this_directory, '.env'), override=True)
 
 # Configuration
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -11,7 +15,7 @@ DB_PORT = os.environ.get("DB_PORT")
 DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
-SOURCE_FOLDER = "./source_documents"
+SOURCE_FOLDER = os.path.join(this_directory, "source_documents")
 
 client = OpenAI()
 embeddings_model = "text-embedding-ada-002"
