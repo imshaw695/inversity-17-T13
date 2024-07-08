@@ -2,16 +2,16 @@
   <main class="h-screen flex flex-col">
     <!-- Top Row: Chat Window -->
     <!-- Bottom Row -->
-    <div class="h-full flex">
+    <div class="h-1/2 flex">
       <!-- Left Column: Articles -->
       <div
-        class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
+        class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
       >
       <iframe src="https://ourworldindata.org/grapher/wind-generation?tab=map" loading="lazy" style="width: 100%; height: 600px; border: 0px none;" allow="web-share; clipboard-write"></iframe>
       </div>
       <!-- Right Column: Pie Chart -->
       <div
-        class="w-1/2 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
+        class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
       >
       <iframe src="https://ourworldindata.org/grapher/wind-energy-consumption-vs-installed-wind-energy-capacity?tab=chart" loading="lazy" style="width: 100%; height: 600px; border: 0px none;" allow="web-share; clipboard-write"></iframe>
       </div>
