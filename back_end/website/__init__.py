@@ -14,6 +14,7 @@ site_config[
 site_config["INSTANCE_TYPE"] = os.environ.get("INSTANCE_TYPE")
 site_config["this_url"] = os.environ.get("this_url")
 
+
 def create_app():
     print("now running create_app")
     # Create Flask application.

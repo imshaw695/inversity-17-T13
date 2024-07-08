@@ -2,8 +2,8 @@ import os
 import logging
 import ast
 from google.cloud import secretmanager, bigquery
-from google.cloud import bigquery_storage
 from google.oauth2 import service_account
+
 
 def get_secret(secret_id):
     try:
@@ -16,21 +16,22 @@ def get_secret(secret_id):
         logging.error(f"Error accessing secret {secret_id}: {e}")
         raise e
 
+
 def get_bigquery_client():
     project_id = os.getenv('gcp_project_id')
-    service_account_file_path = "back_end\secrets_no_git\gcp_creds.json"
-     # Create credentials using the service account key
+    service_account_file_path = "back_end/secrets_no_git/gcp_creds.json"
+    # Create credentials using the service account key
     credentials = service_account.Credentials.from_service_account_file(service_account_file_path)
-    
+
     # Set the credentials to the BigQuery client
     client = bigquery.Client(credentials=credentials, project=project_id)
     return client
+
 
 def fetch_embeddings_from_bigquery(bq_client, dataset_name, table_name):
     query = f"""
         SELECT * FROM `{bq_client.project}.{dataset_name}.{table_name}`
     """
-    # bq_storage_client = bigquery_storage.BigQueryReadClient()
     query_job = bq_client.query(query)
     results = query_job.result()
     df = results.to_dataframe()
