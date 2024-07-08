@@ -1,10 +1,12 @@
 import os
 import fitz  # PyMuPDF
+import tiktoken
+from openai import OpenAI
 import psycopg2
 from dotenv import load_dotenv
-from openai import OpenAI
 from psycopg2 import sql
 
+# Load environment variables
 this_directory = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(this_directory, '.env'), override=True)
 
@@ -19,7 +21,6 @@ SOURCE_FOLDER = os.path.join(this_directory, "source_documents")
 
 client = OpenAI()
 embeddings_model = "text-embedding-ada-002"
-
 # Database connection
 conn = psycopg2.connect(
     host=DB_HOST,
@@ -44,22 +45,42 @@ def extract_text_from_pdf(pdf_path):
 
 def get_embedding(text):
     """Get embedding from OpenAI API."""
-    response = (
+    embedding = (
         client.embeddings.create(input=[text], model="text-embedding-ada-002")
         .data[0]
         .embedding
     )
-    embedding = response['data'][0]['embedding']
     return embedding
 
 
-def save_to_db(source_url, content, embedding):
+def get_token_count_from_string(
+    string: str, encoding_name: str = "gpt-3.5-turbo"
+) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = tiktoken.encoding_for_model(encoding_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
+def save_to_db(source_url, content, embedding, token_count, chunk_index):
     """Save document data to the PostgreSQL database."""
     insert_query = sql.SQL("""
-        INSERT INTO source_documents (source_url, content, embedding)
-        VALUES (%s, %s, %s);
+        INSERT INTO source_documents (source_url, content, embedding, token_count, chunk_index)
+        VALUES (%s, %s, %s, %s, %s);
     """)
-    cur.execute(insert_query, (source_url, content, embedding))
+    cur.execute(insert_query, (source_url, content, embedding, token_count, chunk_index))
+
+
+def chunk_text(text, chunk_size=750, overlap=250):
+    """Chunk text into specified chunk size with overlap."""
+    tokens = text.split()  # Simple tokenization based on whitespace
+    chunks = []
+    for i in range(0, len(tokens), chunk_size - overlap):
+        chunk = tokens[i:i + chunk_size]
+        chunks.append(' '.join(chunk))
+        if i + chunk_size >= len(tokens):
+            break
+    return chunks
 
 
 def process_documents():
@@ -72,11 +93,18 @@ def process_documents():
             # Extract text from PDF
             content = extract_text_from_pdf(pdf_path)
 
-            # Get embedding from OpenAI
-            embedding = get_embedding(content)
+            # Chunk the content with 750 token size and 250 token overlap
+            content_chunks = chunk_text(content, chunk_size=750, overlap=250)
 
-            # Save to database
-            save_to_db(pdf_path, content, embedding)
+            for index, chunk in enumerate(content_chunks):
+                # Get embedding from OpenAI
+                embedding = get_embedding(chunk)
+
+                # Count tokens in the chunk
+                token_count = get_token_count_from_string(chunk)
+
+                # Save to database
+                save_to_db(pdf_path, chunk, embedding, token_count, index)
 
 
 if __name__ == "__main__":

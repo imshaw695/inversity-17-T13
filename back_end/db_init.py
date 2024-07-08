@@ -3,6 +3,7 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2 import sql
 
+# Load environment variables
 this_directory = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(this_directory, '.env'), override=True)
 
@@ -31,7 +32,9 @@ create_table_query = sql.SQL("""
         id SERIAL PRIMARY KEY,
         source_url TEXT NOT NULL,
         content TEXT NOT NULL,
-        embedding vector(1536) NOT NULL
+        embedding vector(1536) NOT NULL,
+        token_count INT NOT NULL,
+        chunk_index INT NOT NULL
     );
 """)
 

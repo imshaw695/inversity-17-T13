@@ -118,7 +118,7 @@ export default {
             }));
 
             conversationHistory.push({ role: 'user', content: this.newMessage });
-            this.newMessage = "";
+
             // Send the message to the server
             try {
                 const response = await fetch(`${this.domain_origin}/send_message`, {
@@ -126,11 +126,11 @@ export default {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ conversation_history: conversationHistory }),
+                    body: JSON.stringify({ conversation_history: conversationHistory, message: this.newMessage}),
                 });
 
                 const result = await response.json();
-
+                this.newMessage = "";
                 // Display the complete chat history from the server
                 if (response.ok) {
                     this.messages = result.conversation_history.map(msg => ({

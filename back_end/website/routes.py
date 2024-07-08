@@ -1,5 +1,6 @@
 import os
 from flask import jsonify, send_from_directory, render_template, request
+from website.utilities import execute_sql, get_embedding, get_response
 from flask import current_app as app
 import time
 # from website.llm_handler import ask, truncate_conversation_history
@@ -19,6 +20,7 @@ BQ_TABLE = os.getenv('BQ_TABLE')
 # except Exception as e:
 #     logging.error(f"Error fetching embeddings from BigQuery: {e}")
 #     df_chunks = None
+
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
@@ -48,15 +50,18 @@ def send_message():
         # global df_chunks
         data = request.json
         conversation_history = data.get('conversation_history', [])
+        embeddings = get_embedding(data["message"])
+        matches = get_close_matches(embeddings)
+        matched_contents = [match[3] for match in matches]
         # truncated_history = truncate_conversation_history(conversation_history)
         # response = ask(truncated_history, df_chunks)
-        response = "This is a response from the flask server."
+        response = get_response(matched_contents, data["message"])
         conversation_history.append({"role": "assistant", "content": response})
-        time.sleep(2)
+        # time.sleep(2)
         return jsonify({'response': response, 'conversation_history': conversation_history})
     except Exception as e:
         app.logger.error(f"Error in /send_message: {e}")
-        return jsonify({'error': 'An error occurred while processing the request'}), 500   
+        return jsonify({'error': 'An error occurred while processing the request'}), 500
 
 
 @app.errorhandler(404)
@@ -91,3 +96,13 @@ def show_favicon():
     except Exception as e:
         app.logger.error(f"Error serving favicon: {e}")
         return "Error serving favicon", 500
+
+
+def get_close_matches(embeddings, n=5):
+    sql = f"""
+        SELECT embedding <-> ('{embeddings}') as distance, *
+        FROM source_documents
+        ORDER BY distance LIMIT {n}
+    """
+    results = execute_sql(sql, records=True)
+    return results['tuples']

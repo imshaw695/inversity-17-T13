@@ -3,7 +3,6 @@ import pandas as pd
 from scipy import spatial
 import openai
 import tiktoken
-from google.cloud import secretmanager
 import logging
 
 EMBEDDING_MODEL = "text-embedding-3-small"
@@ -11,7 +10,7 @@ GPT_MODEL = 'gpt-3.5-turbo'
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
-    
+
 # Fetch the API key from Secret Manager
 try:
     openai_api_key = os.getenv('OPEN_API_KEY') # Ensure this matches your secret name
@@ -21,6 +20,7 @@ except Exception as e:
     logging.error(f"Error fetching OpenAI API key: {e}")
     openai_api_key = None
 
+
 def strings_ranked_by_relatedness(
     query: str,
     df: pd.DataFrame,
@@ -28,7 +28,7 @@ def strings_ranked_by_relatedness(
     embedding_col_name: str = "Embeddings",
     relatedness_fn=lambda x, y: 1 - spatial.distance.cosine(x, y),
     top_n: int = 20,
-    client = client_openai
+    client=client_openai
 ) -> tuple[list[str], list[float]]:
     """Returns a list of strings and relatednesses, sorted from most related to least."""
     query_embedding_response = client.embeddings.create(
@@ -48,6 +48,7 @@ def strings_ranked_by_relatedness(
     strings, relatednesses = zip(*strings_and_relatednesses)
     return strings[:top_n], relatednesses[:top_n]
 
+
 def num_tokens(text: str, model: str = GPT_MODEL) -> int:
     """Return the number of tokens in a string."""
     encoding = tiktoken.encoding_for_model(model)
@@ -56,10 +57,12 @@ def num_tokens(text: str, model: str = GPT_MODEL) -> int:
 
 MAX_HISTORY_LENGTH = 10  # Limit the conversation history to the last 10 interactions
 
+
 def truncate_conversation_history(conversation_history):
     if len(conversation_history) > MAX_HISTORY_LENGTH:
         return conversation_history[-MAX_HISTORY_LENGTH:]
     return conversation_history
+
 
 def query_message(
     conversation_history: list,
@@ -86,6 +89,7 @@ def query_message(
     full_message = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history]) + message
     return full_message + question
 
+
 def ask(
     conversation_history: list,
     df: pd.DataFrame,
@@ -108,4 +112,3 @@ def ask(
     )
     response_message = response.choices[0].message.content
     return response_message
-
