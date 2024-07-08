@@ -30,6 +30,11 @@ The backend is built with Flask, a lightweight WSGI web application framework. I
    - Windows: `set FLASK_APP=wsgi.py`
    - macOS/Linux: `export FLASK_APP=wsgi.py`
 6. Run the application: `flask run`
+7. Go to the root directory, create a folder called "secrets_no_git".
+8. Inside, create a file called POSTGRES_PASSWORD.txt, choose a password for your pgvector database.
+9. Ensure you have docker desktop installed and running locally.
+10. In root directory, run docker-compose up --build to build your pgvector database.
+11. Run a query in this new database: CREATE EXTENSION IF NOT EXISTS vector;
 
 ### Frontend
 

@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 secrets_no_git
+db
 
 # Distribution / packaging
 .Python
