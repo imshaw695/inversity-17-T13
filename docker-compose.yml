@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  db:
+    # pgvector is a postgres image that already has the pgvector extension installed 
+    # Ypou must enable the extension by running the following command in a query window 
+    # CREATE EXTENSION vector;
+    image: ankane/pgvector
+    # image: postgres
+    environment:
+      # not sure of the exact mechanism but /run/secrets/ is a magic name and 
+      # something here makes the file referenced in the overall secrets section 
+      # get copied to the docker instance so that it can be read by postgress when it 
+      # initialises in the container
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD_SECRET_FILE
+      POSTGRES_USER: inversity_user
+      POSTGRES_DB: crown_estate_db
+
+    secrets:
+      -  POSTGRES_PASSWORD_SECRET_FILE
+
+    volumes:
+      - ./db/pgdata_no_git/:/var/lib/postgresql/data
+
+    ports:
+    # use 5433 on the host machine so it does not conflict with any other postgres installation
+      - "5433:5432"
+
+secrets:
+  # Make sure to create the following directory and file 
+  # Also include secrets_no_git in the .gitignore file 
+  # There is no structure to the file containing the password, just include the 
+  # password on line 1 with no spaces 
+  POSTGRES_PASSWORD_SECRET_FILE:
+    file: ./secrets_no_git/POSTGRES_PASSWORD.txt
+
