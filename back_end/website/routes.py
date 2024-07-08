@@ -1,6 +1,7 @@
 import os
 from flask import jsonify, send_from_directory, render_template, request
 from flask import current_app as app
+import time
 # from website.llm_handler import ask, truncate_conversation_history
 # from website.google_utils import get_bigquery_client, fetch_embeddings_from_bigquery
 # import logging
@@ -51,6 +52,7 @@ def send_message():
         # response = ask(truncated_history, df_chunks)
         response = "This is a response from the flask server."
         conversation_history.append({"role": "assistant", "content": response})
+        time.sleep(2)
         return jsonify({'response': response, 'conversation_history': conversation_history})
     except Exception as e:
         app.logger.error(f"Error in /send_message: {e}")
