@@ -1,36 +1,26 @@
 <template>
   <main class="h-screen flex flex-col">
     <!-- Top Row: Chat Window -->
-    <div
-      class="h-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 flex flex-col"
-    >
+    <div class="h-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 flex flex-col">
       <div class="flex-1 overflow-y-auto mb-4" ref="chatContainer">
         <div v-for="(msg, index) in messages" :key="index" class="mb-2">
           <div :class="msg.isSent ? 'text-right' : 'text-left'">
-            <span
-              :class="
-                msg.isSent ? 'bg-blue-500 text-white' : 'bg-green-400 text-black'
-              "
-              class="inline-block px-4 py-2 rounded-lg"
-            >
+            <span :class="msg.isSent ? 'bg-blue-500 text-white' : 'bg-green-400 text-black'
+          " class="inline-block px-4 py-2 rounded-lg">
               {{ msg.text }}
             </span>
           </div>
         </div>
       </div>
       <div class="flex">
-        <input
-          v-model="newMessage"
-          type="text"
-          class="flex-1 p-2 border rounded-lg bg-gray-200"
-          placeholder="Type your message"
-          @keyup.enter="sendMessage"
-        />
-        <button
-          @click="sendMessage"
-          class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Send
+        <input v-model="newMessage" type="text" class="flex-1 p-2 border rounded-lg bg-gray-200"
+          placeholder="Type your message" @keyup.enter="sendMessage" />
+        <button @click="sendMessage" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 w-1/12 justify-center items-center"
+          :disabled="waiting">
+          <span v-if="!waiting">Send</span>
+          <span v-else>
+            <div class="loader"></div>
+          </span>
         </button>
       </div>
     </div>
@@ -38,9 +28,7 @@
     <!-- Bottom Row -->
     <div class="h-1/2 flex">
       <!-- Left Column: Articles -->
-      <div
-        class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2"
-      >
+      <div class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2">
         <div class="flex justify-between mb-4">
           <h2 class="text-xl">Articles</h2>
           <button class="px-2 py-1 bg-gray-200 rounded-lg">Filter</button>
@@ -53,9 +41,10 @@
       </div>
       <!-- Right Column: Pie Chart -->
       <div
-        class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2 flex justify-center items-center"
-      >
-      <iframe src="https://ourworldindata.org/grapher/cumulative-installed-wind-energy-capacity-gigawatts?tab=chart" loading="lazy" style="width: 100%; height: 600px; border: 0px none;" allow="web-share; clipboard-write"></iframe>
+        class="w-1/2 p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 m-2 flex justify-center items-center">
+        <iframe src="https://ourworldindata.org/grapher/cumulative-installed-wind-energy-capacity-gigawatts?tab=chart"
+          loading="lazy" style="width: 100%; height: 600px; border: 0px none;"
+          allow="web-share; clipboard-write"></iframe>
       </div>
     </div>
   </main>
@@ -79,7 +68,7 @@ export default {
         { title: "Shell Exits US Offshore Wind Project, Sells Stake to Ocean Winds", link: "https://www.offshorewind.biz/2024/03/21/shell-exits-us-offshore-wind-project-sells-stake-to-ocean-winds/" },
         { title: "Plymouth Marine Laboratory: Offshore wind farms: new paper reveals global impacts on biodiversity and ecosystem services", link: "https://www.pml.ac.uk/news/Offshore-wind-farms-new-paper-reveals-global-impac" },
       ],
-      waiting: true,
+      waiting: false,
     };
   },
   components: {
@@ -185,5 +174,18 @@ export default {
 </script>
 
 <style scoped>
-/* Add any additional styles if necessary */
+.loader {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
